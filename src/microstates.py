@@ -17,10 +17,9 @@ Little changes / additions by me.
 
 import logging
 import os
+import string
 from itertools import permutations
 
-import matplotlib as mpl
-import string
 import mne
 import numpy as np
 import pandas as pd
@@ -28,6 +27,7 @@ from matplotlib import pyplot as plt
 from scipy.io import loadmat
 from scipy.signal import convolve, find_peaks, get_window
 from scipy.stats import zscore
+
 from src.helpers import DATA_ROOT
 
 DEFAULT_TEMPLATES = os.path.join(DATA_ROOT, "MS-templates_Koenig")
