@@ -212,7 +212,7 @@ class PsilocybinRecording:
             )
         }
 
-    def _compute_freq_of_occurence(self):
+    def _compute_freq_of_occurencre(self):
         """
         Computes average frequency of occurence of microstates in segmented time
         series per second.
@@ -247,7 +247,7 @@ class PsilocybinRecording:
         occurence, average lifespan and transition probablity matrix.
         """
         self._compute_coverage()
-        self._compute_freq_of_occurence()
+        self._compute_freq_of_occurrence()
         self._compute_lifespan()
         self._compute_transition_matrix()
         self.computed_stats = True
@@ -270,7 +270,7 @@ class PsilocybinRecording:
                 "session",
                 "microstate",
                 "coverage",
-                "occurence",
+                "occurrence",
                 "lifespan",
             ]
             + [f"transition->{to_ms}" for to_ms in ms_names]

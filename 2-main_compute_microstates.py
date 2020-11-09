@@ -151,6 +151,8 @@ def main():
             )
         # save group means
         logging.info("Computing group mean maps...")
+        group_folder = os.path.join(plotting_folder, "group_maps")
+        make_dirs(group_folder)
         ms_groups = {}
         for recording in tqdm(data_ms):
             opts = recording.attrs["ms_opts"]
@@ -190,9 +192,7 @@ def main():
                     for corr in corrs_template
                 ],
                 tit=f"{key.replace('filt', 'Hz').replace('_', ' ')} group mean",
-                fname=os.path.join(
-                    plotting_folder, f"group_mean_{key}{PLOT_EXT}"
-                ),
+                fname=os.path.join(group_folder, f"group_mean_{key}{PLOT_EXT}"),
                 transparent=True,
             )
 
