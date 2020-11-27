@@ -42,7 +42,7 @@ MS_OPTIONS = [(2.0, 20.0, 4), (1.0, 40.0, 3)]
 N_INITS = 500
 
 SAVE_PLOTS = True
-PLOT_EXT = ".png"
+PLOT_EXT = ".eps"
 
 
 def _append_or_create(dict_, key_, value):
@@ -202,7 +202,7 @@ def main():
         [recording.get_stats_pandas(write_attrs=True) for recording in data_ms],
         axis=0,
     )
-    full_df.to_csv(os.path.join(working_folder, "ms_stats.csv"))
+    full_df.to_csv(os.path.join(working_folder, "ms_stats_run2.csv"))
 
 
 if __name__ == "__main__":

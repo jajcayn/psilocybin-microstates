@@ -212,10 +212,10 @@ class PsilocybinRecording:
             )
         }
 
-    def _compute_freq_of_occurencre(self):
+    def _compute_freq_of_occurrence(self):
         """
-        Computes average frequency of occurence of microstates in segmented time
-        series per second.
+        Computes average frequency of occurrence of microstates in segmented
+        time series per second.
         """
         assert self.segmentation is not None
         freq_occurence = {}
@@ -269,6 +269,9 @@ class PsilocybinRecording:
                 "subject",
                 "session",
                 "microstate",
+                "var_GFP",
+                "var_total",
+                "template_corr",
                 "coverage",
                 "occurrence",
                 "lifespan",
@@ -280,6 +283,9 @@ class PsilocybinRecording:
                 self.subject,
                 self.session,
                 ms_name,
+                self.gev_gfp,
+                self.gev_tot,
+                self.corrs_template[ms_idx],
                 self.coverage[ms_idx],
                 self.freq_occurence[ms_idx],
                 self.avg_lifespan[ms_idx],
