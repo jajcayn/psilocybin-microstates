@@ -42,7 +42,7 @@ MS_OPTIONS = [(2.0, 20.0, 4), (1.0, 40.0, 3)]
 N_INITS = 500
 
 SAVE_PLOTS = True
-PLOT_EXT = ".eps"
+PLOT_EXT = ".png"
 
 
 def _append_or_create(dict_, key_, value):
@@ -145,7 +145,7 @@ def main():
                     f"r={np.abs(corr):.3f} vs. template"
                     for corr in recording.corrs_template
                 ],
-                tit=title,
+                title=title,
                 fname=fname,
                 transparent=True,
             )
@@ -161,7 +161,7 @@ def main():
                 ms_groups, filt_str, recording.microstates
             )
         for key, group_maps in ms_groups.items():
-            n_states = 3 if "1-40" in key else 4
+            n_states = 3 if "1.0-40.0" in key else 4
             group_mean, _, _, _ = segment(
                 np.concatenate(group_maps, axis=0).T,
                 n_states=n_states,
@@ -191,7 +191,7 @@ def main():
                     f"r={np.abs(corr):.3f} vs. template"
                     for corr in corrs_template
                 ],
-                tit=f"{key.replace('filt', 'Hz').replace('_', ' ')} group mean",
+                title=f"{key.replace('filt', 'Hz').replace('_', ' ')} group mean",
                 fname=os.path.join(group_folder, f"group_mean_{key}{PLOT_EXT}"),
                 transparent=True,
             )
