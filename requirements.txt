@@ -7,6 +7,7 @@ mne
 numpy
 pandas
 pingouin
+scikit-learn
 scipy
 seaborn
 tqdm
