@@ -15,7 +15,13 @@ import mne
 import numpy as np
 import pandas as pd
 import scipy.stats as sts
-from src.microstates import get_gfp_peaks, match_reorder_microstates, segment
+
+from src.microstates import (
+    get_gfp_peaks,
+    global_map_dissimilarity,
+    match_reorder_microstates,
+    segment,
+)
 
 MNE_LOGGING_LEVEL = "WARNING"
 mne.set_log_level(MNE_LOGGING_LEVEL)
@@ -123,23 +129,35 @@ class PsilocybinRecording:
             return_polarity=True,
         )
 
-    def reassign_segmentation_by_midpoints(self):
+    def reassign_segmentation_by_midpoints(self, method="corr"):
         """
         Redo segmentation based by midpoints - the GFP peaks are labelled based
-        on correspondance and neighbours are smooth between them.
+        on correspondence and neighbours are smooth between them.
+
+        :param method: which assignment method to use
+        :type method: str
         """
+        assert method in ["corr", "GMD"]
         if self.gfp_peaks is None:
             self.gfp()
         segmentation = np.ones_like(self.gfp_curve, dtype=np.int)
         segmentation *= self.microstates.shape[0] * 2
         for peak in self.gfp_peaks:
             # list of corr. coefs between original map and 4 microstates
-            pearson = [
-                np.abs(sts.pearsonr(mic, self.data[:, peak])[0])
-                for mic in self.microstates
-            ]
-            # pick microstate with max corr.
-            segmentation[peak] = pearson.index(max(pearson))
+            if method == "corr":
+                similarity = [
+                    np.abs(sts.pearsonr(mic, self.data[:, peak])[0])
+                    for mic in self.microstates
+                ]
+                # pick microstate with max corr.
+                segmentation[peak] = similarity.index(max(similarity))
+            elif method == "GMD":
+                similarity = [
+                    np.abs(global_map_dissimilarity(mic, self.data[:, peak]))
+                    for mic in self.microstates
+                ]
+                # pick microstate with min GMD
+                segmentation[peak] = similarity.index(min(similarity))
 
         # midpoints between microstates (temporal sense)
         peaks = self.gfp_peaks.copy()

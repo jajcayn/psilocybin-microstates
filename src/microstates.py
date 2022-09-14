@@ -35,6 +35,36 @@ MNE_LOGGING_LEVEL = "WARNING"
 mne.set_log_level(MNE_LOGGING_LEVEL)
 
 
+def global_map_dissimilarity(map1, map2):
+    """
+    Computes a global map dissimilarity between two maps.
+
+    https://github.com/emma-holmes/Source-Dissimilarity-Index-for-Python/blob/master/SourceDissimilarityIndex.py
+
+    :param map1: first map to compare
+    :type map1: first map to compare
+    :param map2: second map to compare
+    :type map2: second map to compare
+    :return: global map dissimilarity
+    :rtype: float
+    """
+    assert map1.shape == map2.shape
+
+    def normalize(data):
+        data_norm = data.reshape(1, np.size(data), order="F").copy()
+        data_norm = data_norm - np.mean(data_norm)
+        if np.mean(data_norm**2) != 0:
+            data_norm = data_norm / np.math.sqrt(np.mean(data_norm**2))
+
+        return data_norm
+
+    map1_norm = normalize(map1)
+    map2_norm = normalize(map2)
+    gmd = np.sqrt(np.mean((map1_norm - map2_norm) ** 2))
+
+    return gmd
+
+
 def get_gfp_peaks(data, min_peak_dist=2, smoothing=None, smoothing_window=100):
     """
     Compute GFP peaks.
@@ -130,7 +160,7 @@ def segment(
         gfp_curve = np.std(data, axis=0)
 
     # Cache this value for later
-    gfp_sum_sq = np.sum(gfp_curve ** 2)
+    gfp_sum_sq = np.sum(gfp_curve**2)
     peaks_sum_sq = np.sum(data[:, peaks].std(axis=0) ** 2)
 
     # Do several runs of the k-means algorithm, keep track of the best
@@ -199,7 +229,7 @@ def _mod_kmeans(
     n_channels, n_samples = data.shape
 
     # Cache this value for later
-    data_sum_sq = np.sum(data ** 2)
+    data_sum_sq = np.sum(data**2)
 
     # Select random timepoints for our initial topographic maps
     init_times = random_state.choice(n_samples, size=n_states, replace=False)

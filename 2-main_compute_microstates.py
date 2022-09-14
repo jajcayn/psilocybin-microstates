@@ -37,7 +37,8 @@ EXCLUDE_SUBJECTS = [4, 13, 14, 20, 22]
 
 WORKERS = cpu_count()
 # as (filter low, filter high, no. states)
-MS_OPTIONS = [(2.0, 20.0, 4), (1.0, 40.0, 3)]
+# MS_OPTIONS = [(2.0, 20.0, 4), (1.0, 40.0, 3)]
+MS_OPTIONS = [(1.0, 40.0, 4)]
 # number of initialisation for each microstate computation
 N_INITS = 500
 
@@ -117,7 +118,7 @@ def main():
     ):
         data_ms.append(result)
 
-    assert len(data_ms) == 2 * len(data)
+    # assert len(data_ms) == 2 * len(data)
     pool.close()
     pool.join()
     logging.info("Microstates computed.")
@@ -161,7 +162,8 @@ def main():
                 ms_groups, filt_str, recording.microstates
             )
         for key, group_maps in ms_groups.items():
-            n_states = 3 if "1.0-40.0" in key else 4
+            # n_states = 3 if "1.0-40.0" in key else 4
+            n_states = 4
             group_mean, _, _, _ = segment(
                 np.concatenate(group_maps, axis=0).T,
                 n_states=n_states,
@@ -202,7 +204,7 @@ def main():
         [recording.get_stats_pandas(write_attrs=True) for recording in data_ms],
         axis=0,
     )
-    full_df.to_csv(os.path.join(working_folder, "ms_stats_run2.csv"))
+    full_df.to_csv(os.path.join(working_folder, "ms_stats_run.csv"))
 
 
 if __name__ == "__main__":
