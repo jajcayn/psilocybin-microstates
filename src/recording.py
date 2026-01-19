@@ -15,6 +15,7 @@ import mne
 import numpy as np
 import pandas as pd
 import scipy.stats as sts
+import xarray as xr
 
 from src.microstates import (
     get_gfp_peaks,
@@ -47,7 +48,7 @@ class PsilocybinRecording:
 
     def __init__(self, subject_no, session, data):
         """
-        :param subject_no: subject idenrifier
+        :param subject_no: subject identifier
         :type subject_no: int|str
         :param session: session / time of the recording
         :type session: str
@@ -140,7 +141,7 @@ class PsilocybinRecording:
         assert method in ["corr", "GMD"]
         if self.gfp_peaks is None:
             self.gfp()
-        segmentation = np.ones_like(self.gfp_curve, dtype=np.int)
+        segmentation = np.ones_like(self.gfp_curve, dtype=int)
         segmentation *= self.microstates.shape[0] * 2
         for peak in self.gfp_peaks:
             # list of corr. coefs between original map and 4 microstates
@@ -167,9 +168,9 @@ class PsilocybinRecording:
 
         for idx in range(len(midpoints) - 1):
             # fill between two midpoints with microstate at peak
-            segmentation[
-                midpoints[idx] : midpoints[idx + 1] + 1
-            ] = segmentation[peaks[idx + 1]]
+            segmentation[midpoints[idx] : midpoints[idx + 1] + 1] = (
+                segmentation[peaks[idx + 1]]
+            )
 
         # beginning and end of ts, since these were omitted in the loop
         segmentation[: midpoints[0]] = segmentation[peaks[0]]
@@ -269,6 +270,39 @@ class PsilocybinRecording:
         self._compute_lifespan()
         self._compute_transition_matrix()
         self.computed_stats = True
+
+    def get_segmentation_xarray(self, return_segmentation=False):
+        """
+        Return microstate topographies and optionally segmentation as
+        xr.DataArray.
+
+        :param return_segmentation: whether to return also segmentations
+        :type return_segmentation: bool
+        :return: microstate topographies and optionally segmentation as
+            xr.DataArray
+        :rtype: `xr.DataArray`
+        """
+        extra_coords = {"subject": self.subject, "session": self.session}
+        topo = xr.DataArray(
+            self.microstates,
+            dims=["microstate", "channel"],
+            coords={
+                "microstate": list(string.ascii_uppercase)[
+                    : self.microstates.shape[0]
+                ],
+                "channel": self.info["ch_names"],
+            },
+        ).assign_coords(extra_coords)
+        if return_segmentation:
+            segmentation = xr.DataArray(
+                self.segmentation,
+                dims=["time"],
+                coords={"time": self.data.times},
+            ).assign_coords(extra_coords)
+
+            return topo, segmentation
+        else:
+            return topo
 
     def get_stats_pandas(self, write_attrs=False):
         """

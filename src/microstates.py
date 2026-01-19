@@ -54,7 +54,7 @@ def global_map_dissimilarity(map1, map2):
         data_norm = data.reshape(1, np.size(data), order="F").copy()
         data_norm = data_norm - np.mean(data_norm)
         if np.mean(data_norm**2) != 0:
-            data_norm = data_norm / np.math.sqrt(np.mean(data_norm**2))
+            data_norm = data_norm / np.sqrt(np.mean(data_norm**2))
 
         return data_norm
 

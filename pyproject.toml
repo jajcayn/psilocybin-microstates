@@ -1,0 +1,23 @@
+[project]
+name = "psilo-ms"
+version = "0.1.0"
+description = "psilocybin microstates"
+authors = [
+    { name = "Nikola Jajcay", email = "code@nikolajajcay.eu" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "ipython>=9.9.0",
+    "jupyter>=1.1.1",
+    "mne>=1.11.0",
+    "numpy>=2.4.1",
+    "pandas>=2.3.3",
+    "pingouin>=0.5.5",
+    "rich>=14.2.0",
+    "scikit-learn>=1.8.0",
+    "scipy>=1.17.0",
+    "seaborn>=0.13.2",
+    "tqdm>=4.67.1",
+    "typer>=0.21.1",
+    "xarray>=2025.12.0",
+]

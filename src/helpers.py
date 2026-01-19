@@ -10,7 +10,7 @@ import time
 from functools import partial, wraps
 from multiprocessing import Pool, cpu_count
 
-from tqdm import tqdm
+from tqdm.rich import tqdm
 
 PROJECT_ROOT = os.path.normpath(
     os.path.join(os.path.abspath(__file__), "..", "..", "..")
@@ -146,7 +146,7 @@ def make_dirs(path):
     :type path: str
     """
     try:
-        os.makedirs(path)
+        os.makedirs(path, exist_ok=True)
     except OSError as error:
         logging.warning(f"{path} could not be created: {error}")
 

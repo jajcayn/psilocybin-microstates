@@ -3,13 +3,15 @@ Compute GFP peak stats and test for ideal number of microstates.
 
 (c) Nikola Jajcay
 """
+
 import os
 from copy import deepcopy
+from multiprocessing import cpu_count
 
 import numpy as np
 import pandas as pd
-
 import src.clustering_scores as scores
+import typer
 from src.helpers import (
     DATA_ROOT,
     RESULTS_ROOT,
@@ -26,11 +28,9 @@ from src.recording import load_all_data
 # 22: PSI-T1 - very short data
 EXCLUDE_SUBJECTS = [4, 13, 14, 20, 22]
 
-WORKERS = 5
-NO_STATES_RANGE = np.arange(4, 11)
-FILTER_OPTIONS = [(2.0, 20.0), (1.0, 30.0), (1.0, 40.0)]
+NO_STATES_RANGE = np.arange(2, 11)
+FILTER_OPTIONS = [(2.0, 20.0), (1.0, 40.0)]
 # number of initialisations for each microstate computation
-N_INITS = 200
 
 
 def _process_recording(args):
@@ -41,7 +41,7 @@ def _process_recording(args):
         tuple
     :type args: tuple[`PsilocybinRecording` & tuple]
     """
-    recording, filter_, n_states = args
+    recording, filter_, n_states, n_inits = args
     df = {
         "subject": recording.subject,
         "session": recording.session,
@@ -54,7 +54,7 @@ def _process_recording(args):
 
     df_corr = deepcopy(df)
     df_corr["method"] = "corr"
-    recording.run_microstates(n_states=n_states, n_inits=N_INITS)
+    recording.run_microstates(n_states=n_states, n_inits=n_inits)
     recording.reassign_segmentation_by_midpoints(method="corr")
     df_corr["# states"] = n_states
     df_corr["PM variance total"] = scores.pascual_marqui_variance_test(
@@ -76,7 +76,7 @@ def _process_recording(args):
 
     df_gmd = deepcopy(df)
     df_gmd["method"] = "GMD"
-    recording.run_microstates(n_states=n_states, n_inits=N_INITS)
+    recording.run_microstates(n_states=n_states, n_inits=n_inits)
     recording.reassign_segmentation_by_midpoints(method="GMD")
     df_gmd["# states"] = n_states
     df_gmd["PM variance total"] = scores.pascual_marqui_variance_test(
@@ -101,10 +101,8 @@ def _process_recording(args):
     )
 
 
-def main():
-    working_folder = os.path.join(
-        RESULTS_ROOT, "gfp_and_no_mstates_4states_min"
-    )
+def main(folder: str, n_inits: int = 500, workers: int = cpu_count()) -> None:
+    working_folder = os.path.join(RESULTS_ROOT, folder)
     make_dirs(working_folder)
     set_logger(log_filename=os.path.join(working_folder, "log"))
     data = load_all_data(os.path.join(DATA_ROOT, "processed"), EXCLUDE_SUBJECTS)
@@ -113,12 +111,12 @@ def main():
     results = run_in_parallel(
         _process_recording,
         [
-            (deepcopy(recording), filter_, n_states)
+            (deepcopy(recording), filter_, n_states, n_inits)
             for recording in data
             for filter_ in FILTER_OPTIONS
             for n_states in NO_STATES_RANGE
         ],
-        workers=WORKERS,
+        workers=workers,
     )
 
     results = pd.concat(list(results), axis=0)
@@ -126,4 +124,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    typer.run(main)
