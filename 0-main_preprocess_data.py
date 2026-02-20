@@ -9,8 +9,9 @@ import os
 
 import mne
 import pandas as pd
-from src.helpers import DATA_ROOT, make_dirs, set_logger
 from tqdm import tqdm
+
+from src.helpers import DATA_ROOT, make_dirs, set_logger
 
 # sampling rate of raw data
 SAMPLING_RATE = 1000.0
@@ -21,7 +22,10 @@ RENAME = True
 # target length seconds
 TARGET_LENGTH = 40
 
-RAW_DATA = "/Volumes/Q/science-brain/UI-microstates/data_v2 - Palenicek-raw/raw_continuous"
+RAW_DATA = (
+    "/Volumes/Q/science-brain/UI-microstates/"
+    "data_v2 - Palenicek-raw/raw_continuous"
+)
 
 KEEP_CHANNELS = [
     "Fp1",
@@ -47,7 +51,7 @@ KEEP_CHANNELS = [
 ]
 
 
-def load_ascii_data_to_mne(filename):
+def load_ascii_data_to_mne(filename: str) -> mne.io.RawArray:
     """
     Load ASCII data in text file to mne.
 
@@ -62,9 +66,7 @@ def load_ascii_data_to_mne(filename):
     elif len(data.columns) == 28:
         ch_types = ["eeg"] * 20 + ["eog"] * 4 + ["ecg", "misc", "misc", "misc"]
     info = mne.create_info(
-        ch_names=list(data.columns),
-        sfreq=SAMPLING_RATE,
-        ch_types=ch_types,
+        ch_names=list(data.columns), sfreq=SAMPLING_RATE, ch_types=ch_types
     )
 
     montage = "standard_1005"
@@ -74,7 +76,7 @@ def load_ascii_data_to_mne(filename):
     return mne_data
 
 
-def main():
+def main() -> None:
     target_folder = os.path.join(DATA_ROOT, "processed")
     make_dirs(target_folder)
     set_logger(log_filename=os.path.join(target_folder, "log"))
@@ -88,11 +90,9 @@ def main():
         if row["Subj. & session No."] != "same":
             current_subject = row["Subj. & session No."]
         try:
+            seg_suffix = "_Segmentation 2s nonoverlap skip bad_continuous.txt"
             data = load_ascii_data_to_mne(
-                os.path.join(
-                    RAW_DATA,
-                    f"{row['filename']}_Segmentation 2s nonoverlap skip bad_continuous.txt",
-                )
+                os.path.join(RAW_DATA, f"{row['filename']}{seg_suffix}")
             )
         except FileNotFoundError:
             problematic.append(f"{row['filename']} - file not found")
@@ -106,7 +106,10 @@ def main():
             problematic.append(f"{row['filename']} - time not matching")
         data.resample(RESAMPLE_TO)
         if RENAME:
-            fname = f"{current_subject}_T{row['EO']}_{TARGET_LENGTH}s_256samp_raw.fif"
+            fname = (
+                f"{current_subject}_T{row['EO']}_"
+                f"{TARGET_LENGTH}s_256samp_raw.fif"
+            )
             fname = os.path.join(target_folder, fname)
         else:
             fname = os.path.join(

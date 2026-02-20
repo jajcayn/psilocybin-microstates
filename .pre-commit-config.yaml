@@ -1,6 +1,6 @@
 repos:
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.14.13
+  rev: v0.15.2
   hooks:
     # ruff linter - on par with `uvx ruff check`
     - id: ruff-check
@@ -8,7 +8,7 @@ repos:
     - id: ruff-format
 
 - repo: https://github.com/astral-sh/uv-pre-commit
-  rev: 0.9.26
+  rev: 0.10.4
   hooks:
     # run uv lock and upgrade - on par with `uv lock && uv lock --upgrade`
     - id: uv-lock

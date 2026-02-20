@@ -9,13 +9,15 @@ import logging
 import os
 from copy import deepcopy
 from multiprocessing import Pool, cpu_count
-from typing import Literal
+from typing import Any, Literal
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import typer
 import xarray as xr
+from tqdm.rich import tqdm
+
 from src.helpers import (
     DATA_ROOT,
     PLOTS_ROOT,
@@ -29,8 +31,7 @@ from src.microstates import (
     plot_microstate_maps,
     segment,
 )
-from src.recording import load_all_data
-from tqdm.rich import tqdm
+from src.recording import PsilocybinRecording, load_all_data
 
 # 4: PSI-T3 - no data
 # 13: PSI-T3 - lot of artefacts
@@ -45,7 +46,9 @@ MS_OPTIONS = [(2.0, 20.0, 4), (1.0, 40.0, 3)]
 # MS_OPTIONS = [(1.0, 40.0, 4)]
 
 
-def _append_or_create(dict_, key_, value):
+def _append_or_create(
+    dict_: dict[str, Any], key_: str, value: Any
+) -> dict[str, Any]:
     """
     If key_ is already in the dict_ append the value into the list, otherwise
     create list with value in it.
@@ -67,7 +70,9 @@ def _append_or_create(dict_, key_, value):
     return dict_
 
 
-def _compute_microstates(args):
+def _compute_microstates(
+    args: tuple[PsilocybinRecording, tuple[float, float, int], int],
+) -> PsilocybinRecording:
     """
     Wrapper to process EEG recording. Computes microstates.
 
@@ -158,7 +163,7 @@ def main(
         logging.info("Computing group mean maps...")
         group_folder = os.path.join(plotting_folder, "group_maps")
         make_dirs(group_folder)
-        ms_groups = {}
+        ms_groups: dict[str, Any] = {}
         for recording in tqdm(data_ms):
             opts = recording.attrs["ms_opts"]
             filt_str = f"{opts[0]}-{opts[1]}filt_{recording.session}"
@@ -190,6 +195,9 @@ def main(
                 return_correlation=True,
                 return_attribution_only=True,
             )
+            group_title = (
+                f"{key.replace('filt', 'Hz').replace('_', ' ')} group mean"
+            )
             plot_microstate_maps(
                 group_mean[attribution, :],
                 data_ms[0].info,
@@ -197,7 +205,7 @@ def main(
                     f"r={np.abs(corr):.3f} vs. template"
                     for corr in corrs_template
                 ],
-                title=f"{key.replace('filt', 'Hz').replace('_', ' ')} group mean",
+                title=group_title,
                 fname=os.path.join(group_folder, f"group_mean_{key}{plot_ext}"),
                 transparent=True,
             )
@@ -218,7 +226,7 @@ def main(
         [recording.get_stats_pandas(write_attrs=True) for recording in data_ms],
         axis=0,
     )
-    full_df.to_csv(os.path.join(working_folder, "ms_stats.csv"))
+    full_df.to_csv(os.path.join(working_folder, "ms_stats_run2.csv"))
 
 
 if __name__ == "__main__":

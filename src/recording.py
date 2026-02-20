@@ -10,6 +10,7 @@ import os
 import string
 from glob import glob
 from itertools import groupby
+from typing import Literal, Self
 
 import mne
 import numpy as np
@@ -34,7 +35,7 @@ class PsilocybinRecording:
     """
 
     @classmethod
-    def load_processed(cls, filename):
+    def load_processed(cls, filename: str) -> Self:
         """
         Init class from preprocessed .fif file.
 
@@ -46,7 +47,9 @@ class PsilocybinRecording:
         data = mne.io.read_raw_fif(filename, preload=True)
         return cls(subj_no, f"{session}-{time}", data)
 
-    def __init__(self, subject_no, session, data):
+    def __init__(
+        self, subject_no: int | str, session: str, data: mne.io.BaseRaw
+    ) -> None:
         """
         :param subject_no: subject identifier
         :type subject_no: int|str
@@ -68,7 +71,7 @@ class PsilocybinRecording:
         self.attrs = {}
 
     @property
-    def info(self):
+    def info(self) -> mne.Info:
         """
         Return mne info.
 
@@ -78,7 +81,7 @@ class PsilocybinRecording:
         return self._data.info
 
     @property
-    def data(self):
+    def data(self) -> np.ndarray:
         """
         Return data as numpy array.
 
@@ -87,7 +90,7 @@ class PsilocybinRecording:
         """
         return self._data.get_data()
 
-    def preprocess(self, low, high):
+    def preprocess(self, low: float, high: float) -> None:
         """
         Preprocess data - average reference and band-pass filter.
 
@@ -97,7 +100,7 @@ class PsilocybinRecording:
         self._data.set_eeg_reference("average")
         self._data.filter(low, high)
 
-    def gfp(self):
+    def gfp(self) -> None:
         """
         Compute GFP curve and peaks from eeg.
         """
@@ -105,7 +108,7 @@ class PsilocybinRecording:
             self.data, min_peak_dist=2, smoothing=None, smoothing_window=100
         )
 
-    def run_microstates(self, n_states, n_inits=200):
+    def run_microstates(self, n_states: int, n_inits: int = 200) -> None:
         """
         Run microstate segmentation. Gets canonical microstates and timeseries
         segmentation using the dummy rule - maximal activation.
@@ -130,7 +133,9 @@ class PsilocybinRecording:
             return_polarity=True,
         )
 
-    def reassign_segmentation_by_midpoints(self, method="corr"):
+    def reassign_segmentation_by_midpoints(
+        self, method: Literal["corr", "GMD"] = "corr"
+    ) -> None:
         """
         Redo segmentation based by midpoints - the GFP peaks are labelled based
         on correspondence and neighbours are smooth between them.
@@ -178,8 +183,8 @@ class PsilocybinRecording:
         self.segmentation = segmentation
 
     def match_reorder_microstates(
-        self, microstate_templates, template_channels
-    ):
+        self, microstate_templates: np.ndarray, template_channels: list[str]
+    ) -> None:
         """
         Match and reorder microstates based on template [typically group mean
         maps or Koenig's microstates templates]. Finds maximum average
@@ -202,7 +207,7 @@ class PsilocybinRecording:
         )
         self.microstates = self.microstates[attribution, :]
 
-    def _compute_lifespan(self):
+    def _compute_lifespan(self) -> None:
         """
         Computes average lifespan of microstates in segmented time series in ms.
         """
@@ -219,7 +224,7 @@ class PsilocybinRecording:
             for ms_no in np.unique(self.segmentation)
         }
 
-    def _compute_coverage(self):
+    def _compute_coverage(self) -> None:
         """
         Computes total coverage of microstates in segmented time series.
         """
@@ -231,7 +236,7 @@ class PsilocybinRecording:
             )
         }
 
-    def _compute_freq_of_occurrence(self):
+    def _compute_freq_of_occurrence(self) -> None:
         """
         Computes average frequency of occurrence of microstates in segmented
         time series per second.
@@ -246,7 +251,7 @@ class PsilocybinRecording:
             )
         self.freq_occurence = freq_occurence
 
-    def _compute_transition_matrix(self):
+    def _compute_transition_matrix(self) -> None:
         """
         Computes transition probability matrix.
         """
@@ -260,7 +265,7 @@ class PsilocybinRecording:
             prob_matrix, axis=1, keepdims=True
         )
 
-    def compute_segmentation_stats(self):
+    def compute_segmentation_stats(self) -> None:
         """
         Compute statistics on segmented time series, i.e. coverage, frequency of
         occurence, average lifespan and transition probablity matrix.
@@ -271,7 +276,9 @@ class PsilocybinRecording:
         self._compute_transition_matrix()
         self.computed_stats = True
 
-    def get_segmentation_xarray(self, return_segmentation=False):
+    def get_segmentation_xarray(
+        self, return_segmentation: bool = False
+    ) -> xr.DataArray | tuple[xr.DataArray, xr.DataArray]:
         """
         Return microstate topographies and optionally segmentation as
         xr.DataArray.
@@ -301,10 +308,9 @@ class PsilocybinRecording:
             ).assign_coords(extra_coords)
 
             return topo, segmentation
-        else:
-            return topo
+        return topo
 
-    def get_stats_pandas(self, write_attrs=False):
+    def get_stats_pandas(self, write_attrs: bool = False) -> pd.DataFrame:
         """
         Return all segmentation statistics as pd.DataFrame for subsequent
         statistical analysis.
@@ -348,7 +354,9 @@ class PsilocybinRecording:
         return df
 
 
-def load_all_data(path, exclude_subjects=None):
+def load_all_data(
+    path: str, exclude_subjects: list[int] | None = None
+) -> list[PsilocybinRecording]:
     """
     Load all .fif data from path and exclude individual subjects.
 

@@ -10,8 +10,9 @@ from multiprocessing import cpu_count
 
 import numpy as np
 import pandas as pd
-import src.clustering_scores as scores
 import typer
+
+import src.clustering_scores as scores
 from src.helpers import (
     DATA_ROOT,
     RESULTS_ROOT,
@@ -19,7 +20,7 @@ from src.helpers import (
     run_in_parallel,
     set_logger,
 )
-from src.recording import load_all_data
+from src.recording import PsilocybinRecording, load_all_data
 
 # 4: PSI-T3 - no data
 # 13: PSI-T3 - lot of artefacts
@@ -33,7 +34,9 @@ FILTER_OPTIONS = [(2.0, 20.0), (1.0, 40.0)]
 # number of initialisations for each microstate computation
 
 
-def _process_recording(args):
+def _process_recording(
+    args: tuple[PsilocybinRecording, tuple[float, float], int, int],
+) -> pd.DataFrame:
     """
     Wrapper to process EEG recording. Computes number of GFP peaks.
 

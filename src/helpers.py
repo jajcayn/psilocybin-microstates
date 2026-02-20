@@ -7,8 +7,10 @@ Set of helpers.
 import logging
 import os
 import time
+from collections.abc import Callable, Iterable
 from functools import partial, wraps
 from multiprocessing import Pool, cpu_count
+from typing import Any
 
 from tqdm.rich import tqdm
 
@@ -26,12 +28,12 @@ LOG_EXT = ".log"
 
 
 def run_in_parallel(
-    partial_function,
-    iterable,
-    workers=cpu_count(),
-    length=None,
-    assert_ordered=False,
-):
+    partial_function: Callable[..., Any],
+    iterable: Iterable,
+    workers: int = cpu_count(),
+    length: int | None = None,
+    assert_ordered: bool = False,
+) -> list[Any]:
     """
     Wrapper for running functions in parallel with tqdm bar.
 
@@ -71,7 +73,7 @@ def run_in_parallel(
     return results
 
 
-def _worker_fn(item, fn):
+def _worker_fn(item: Any, fn: Callable[..., Any]) -> Any:
     """
     Wrapper for worker method in order to get original exception from
     a worker process and to log correct exception stacktrace.
@@ -87,7 +89,9 @@ def _worker_fn(item, fn):
         raise
 
 
-def set_logger(log_filename=None, log_level=logging.INFO):
+def set_logger(
+    log_filename: str | None = None, log_level: int = logging.INFO
+) -> None:
     """
     Prepare logger.
 
@@ -121,13 +125,13 @@ def set_logger(log_filename=None, log_level=logging.INFO):
         root_logger.addHandler(file_handler)
 
 
-def timer(method):
+def timer(method: Callable[..., Any]) -> Callable[..., Any]:
     """
     Decorator for timing functions. Writes the time to logger.
     """
 
     @wraps(method)
-    def decorator(*args, **kwargs):
+    def decorator(*args: Any, **kwargs: Any) -> Any:
         time_start = time.time()
         result = method(*args, **kwargs)
         logging.info(
@@ -138,7 +142,7 @@ def timer(method):
     return decorator
 
 
-def make_dirs(path):
+def make_dirs(path: str) -> None:
     """
     Create directory.
 

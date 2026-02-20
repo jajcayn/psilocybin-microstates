@@ -19,6 +19,7 @@ import logging
 import os
 import string
 from itertools import permutations
+from typing import Any
 
 import mne
 import numpy as np
@@ -35,7 +36,7 @@ MNE_LOGGING_LEVEL = "WARNING"
 mne.set_log_level(MNE_LOGGING_LEVEL)
 
 
-def global_map_dissimilarity(map1, map2):
+def global_map_dissimilarity(map1: np.ndarray, map2: np.ndarray) -> float:
     """
     Computes a global map dissimilarity between two maps.
 
@@ -50,7 +51,7 @@ def global_map_dissimilarity(map1, map2):
     """
     assert map1.shape == map2.shape
 
-    def normalize(data):
+    def normalize(data: np.ndarray) -> np.ndarray:
         data_norm = data.reshape(1, np.size(data), order="F").copy()
         data_norm = data_norm - np.mean(data_norm)
         if np.mean(data_norm**2) != 0:
@@ -60,12 +61,15 @@ def global_map_dissimilarity(map1, map2):
 
     map1_norm = normalize(map1)
     map2_norm = normalize(map2)
-    gmd = np.sqrt(np.mean((map1_norm - map2_norm) ** 2))
-
-    return gmd
+    return np.sqrt(np.mean((map1_norm - map2_norm) ** 2))
 
 
-def get_gfp_peaks(data, min_peak_dist=2, smoothing=None, smoothing_window=100):
+def get_gfp_peaks(
+    data: np.ndarray,
+    min_peak_dist: int = 2,
+    smoothing: str | None = None,
+    smoothing_window: int = 100,
+) -> tuple[np.ndarray, np.ndarray]:
     """
     Compute GFP peaks.
 
@@ -83,8 +87,7 @@ def get_gfp_peaks(data, min_peak_dist=2, smoothing=None, smoothing_window=100):
     gfp_curve = np.std(data, axis=0)
     if smoothing is not None:
         gfp_curve = convolve(
-            gfp_curve,
-            get_window(smoothing, Nx=smoothing_window),
+            gfp_curve, get_window(smoothing, Nx=smoothing_window)
         )
     gfp_peaks, _ = find_peaks(gfp_curve, distance=min_peak_dist)
 
@@ -92,16 +95,19 @@ def get_gfp_peaks(data, min_peak_dist=2, smoothing=None, smoothing_window=100):
 
 
 def segment(
-    data,
-    n_states=4,
-    use_gfp=True,
-    n_inits=10,
-    max_iter=1000,
-    thresh=1e-6,
-    normalize=False,
-    return_polarity=False,
-    random_state=None,
-    **kwargs,
+    data: np.ndarray,
+    n_states: int = 4,
+    use_gfp: bool = True,
+    n_inits: int = 10,
+    max_iter: int = 1000,
+    thresh: float = 1e-6,
+    normalize: bool = False,
+    return_polarity: bool = False,
+    random_state: int | np.random.RandomState | None = None,
+    **kwargs: Any,
+) -> (
+    tuple[np.ndarray, np.ndarray, float, float]
+    | tuple[np.ndarray, np.ndarray, np.ndarray, float, float]
 ):
     """
     Segment a continuous signal into microstates.
@@ -172,11 +178,7 @@ def segment(
     best_polarity = None
     for _ in range(n_inits):
         maps = _mod_kmeans(
-            data[:, peaks],
-            n_states,
-            max_iter,
-            thresh,
-            random_state,
+            data[:, peaks], n_states, max_iter, thresh, random_state
         )
         activation = maps.dot(data)
         segmentation = np.argmax(np.abs(activation), axis=0)
@@ -204,17 +206,16 @@ def segment(
             best_gev,
             best_gfp_gev,
         )
-    else:
-        return best_maps, best_segmentation, best_gev, best_gfp_gev
+    return best_maps, best_segmentation, best_gev, best_gfp_gev
 
 
 def _mod_kmeans(
-    data,
-    n_states=4,
-    max_iter=1000,
-    thresh=1e-6,
-    random_state=None,
-):
+    data: np.ndarray,
+    n_states: int = 4,
+    max_iter: int = 1000,
+    thresh: float = 1e-6,
+    random_state: int | np.random.RandomState | None = None,
+) -> np.ndarray:
     """
     The modified K-means clustering algorithm.
 
@@ -275,7 +276,7 @@ def _mod_kmeans(
     return maps
 
 
-def _corr_vectors(A, B, axis=0):
+def _corr_vectors(A: np.ndarray, B: np.ndarray, axis: int = 0) -> np.ndarray:
     """
     Compute pairwise correlation of multiple pairs of vectors.
 
@@ -307,14 +308,14 @@ def _corr_vectors(A, B, axis=0):
 
 
 def plot_microstate_maps(
-    microstates,
-    mne_info,
-    xlabels=None,
-    title="",
-    plot_minmax_vec=True,
-    fname=None,
-    **kwargs,
-):
+    microstates: np.ndarray,
+    mne_info: mne.Info,
+    xlabels: list[str] | None = None,
+    title: str = "",
+    plot_minmax_vec: bool = True,
+    fname: str | None = None,
+    **kwargs: Any,
+) -> None:
     """
     Plots microstate maps.
 
@@ -373,11 +374,11 @@ def plot_microstate_maps(
 
 
 def match_reorder_microstates(
-    maps_input,
-    maps_sortby,
-    return_correlation=False,
-    return_attribution_only=False,
-):
+    maps_input: np.ndarray,
+    maps_sortby: np.ndarray,
+    return_correlation: bool = False,
+    return_attribution_only: bool = False,
+) -> np.ndarray | tuple[Any, ...]:
     """
     Match and reorder microstates. `maps_input` will be reorderer based on
     correlations with `maps_sortby`. Disregards polarity as usual in microstates
@@ -390,9 +391,8 @@ def match_reorder_microstates(
     :param return_correlation: whether to return correlations of the best
         attribution
     :type return_correlation: bool
-    :param return_attribution_only: whether to return only attribution list, i.e.
-        list of indices of the highest correlation, if False, will return
-        reordered maps
+    :param return_attribution_only: whether to return only attribution list
+        (highest correlation indices); if False, returns reordered maps
     :type return_attribution_only: bool
     :return: best attribution or reordered maps, correlation of best attribution
         (if `return_correlation` == True)
@@ -418,11 +418,12 @@ def match_reorder_microstates(
     )
     if return_correlation:
         return to_return, best_corr
-    else:
-        return to_return
+    return to_return
 
 
-def load_Koenig_microstate_templates(n_states=4, path=DEFAULT_TEMPLATES):
+def load_Koenig_microstate_templates(
+    n_states: int = 4, path: str = DEFAULT_TEMPLATES
+) -> tuple[np.ndarray, list[str]]:
     """
     Load microstate canonical maps as per Koening et al. Neuroimage, 2015.
 

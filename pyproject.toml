@@ -1,6 +1,6 @@
 [project]
 name = "psilo-ms"
-version = "0.1.0"
+version = "0.9.0"
 description = "psilocybin microstates"
 authors = [
     { name = "Nikola Jajcay", email = "code@nikolajajcay.eu" }
@@ -21,3 +21,21 @@ dependencies = [
     "typer>=0.21.1",
     "xarray>=2025.12.0",
 ]
+
+[tool.ruff]
+line-length = 80
+indent-width = 4
+target-version = "py312"
+
+[tool.ruff.format]
+indent-style = "space"
+skip-magic-trailing-comma = true
+line-ending = "auto"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "RSE", "PIE", "RET", "ANN", "PLE", "ASYNC"]
+ignore = ["E731", "RET503", "ANN401"]
+exclude = ["*.ipynb"]
+
+[tool.ruff.lint.isort]
+split-on-trailing-comma = false
