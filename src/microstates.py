@@ -103,7 +103,7 @@ def segment(
     thresh: float = 1e-6,
     normalize: bool = False,
     return_polarity: bool = False,
-    random_state: int | np.random.RandomState | None = None,
+    random_state: int | np.random.Generator | None = None,
     **kwargs: Any,
 ) -> (
     tuple[np.ndarray, np.ndarray, float, float]
@@ -214,7 +214,7 @@ def _mod_kmeans(
     n_states: int = 4,
     max_iter: int = 1000,
     thresh: float = 1e-6,
-    random_state: int | np.random.RandomState | None = None,
+    random_state: int | np.random.Generator | None = None,
 ) -> np.ndarray:
     """
     The modified K-means clustering algorithm.
@@ -225,8 +225,8 @@ def _mod_kmeans(
     Author: Marijn van Vliet <w.m.vanvliet@gmail.com>
     Code: https://github.com/wmvanvliet/mne_microstates
     """
-    if not isinstance(random_state, np.random.RandomState):
-        random_state = np.random.RandomState(random_state)
+    if not isinstance(random_state, np.random.Generator):
+        random_state = np.random.default_rng(random_state)
     n_channels, n_samples = data.shape
 
     # Cache this value for later

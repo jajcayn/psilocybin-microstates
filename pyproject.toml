@@ -5,7 +5,7 @@ description = "psilocybin microstates"
 authors = [
     { name = "Nikola Jajcay", email = "code@nikolajajcay.eu" }
 ]
-requires-python = ">=3.12"
+requires-python = ">=3.14"
 dependencies = [
     "ipython>=9.9.0",
     "jupyter>=1.1.1",
@@ -25,7 +25,7 @@ dependencies = [
 [tool.ruff]
 line-length = 80
 indent-width = 4
-target-version = "py312"
+target-version = "py314"
 
 [tool.ruff.format]
 indent-style = "space"
