@@ -73,7 +73,7 @@ def run_in_parallel(
     return results
 
 
-def _worker_fn(item: Any, fn: Callable[..., Any]) -> Any:
+def _worker_fn[T, R](item: R, fn: Callable[[R], T]) -> T:
     """
     Wrapper for worker method in order to get original exception from
     a worker process and to log correct exception stacktrace.
@@ -125,17 +125,17 @@ def set_logger(
         root_logger.addHandler(file_handler)
 
 
-def timer(method: Callable[..., Any]) -> Callable[..., Any]:
+def timer[T](method: Callable[..., T]) -> Callable[..., T]:
     """
     Decorator for timing functions. Writes the time to logger.
     """
 
     @wraps(method)
-    def decorator(*args: Any, **kwargs: Any) -> Any:
+    def decorator(*args: Any, **kwargs: Any) -> T:
         time_start = time.time()
         result = method(*args, **kwargs)
         logging.info(
-            f"`{method.__name__}` call took {time.time() - time_start:.2f} s"
+            f"`{method.__name__}` call took {time.time() - time_start:.2f} s"  # type: ignore[union-attr]
         )
         return result
 
