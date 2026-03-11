@@ -1,0 +1,146 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.20.4",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "bkHC",
+      "code_hash": "e43958d3976a05e429c4482a9bb8f918",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"gfp-stats-and-ideal-number-of-microstates\">GFP stats and ideal number of microstates</h1>\n<span class=\"paragraph\">Analysis of number GFP peaks and ideal number of canonical microstates.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "bfe4452c0f2e58430624f9408721835a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"number-of-gfp-peaks\">Number of GFP peaks</h2></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "afabcf243e8eaba3d5193d54a968175c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"ideal-number-of-canonical-microstates\">Ideal number of canonical microstates</h2>\n<h3 id=\"2-20hz-filter\">2-20Hz filter</h3></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": "d26c314233ebdeddbffcd8bdf4c997ed",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"1-40hz-filter\">1-40Hz filter</h3></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "iLit",
+      "code_hash": "3d31ce91d51a1417f76b07e176b790f3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"summary-plot-for-ideal-number-of-microstates\">Summary plot for ideal number of microstates</h3></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Hbol",
+      "code_hash": "1d0db38904205bec4d6f6f6a1f6cec3e",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "026fef85dd136d6dc79c37f96310d62d",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "9cf089fe478c1d58f37ab9e9fb9d4546",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "35bf4191e78483145f12741bcc9713dc",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "686f31e9112fcaafcd8e87b65b560bc3",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "3fb7ab64cc322e4525483b4306a72ce3",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "d1dcd2014ae25ab6aadc7a62ab0e7ff0",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "43c003312fea9533f0fc64afbd045f12",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "Hstk",
+      "code_hash": "9d3727cb08c05e0eb330ce1b91bc5e91",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "nWHF",
+      "code_hash": "d76d5c20cfca0ce9c7da95fa5d235b63",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "ZHCJ",
+      "code_hash": "0b44377c8e9f6b42dba0c1024d85cc4f",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "ROlb",
+      "code_hash": "8672e0574c77b6feab0681057d226eb9",
+      "outputs": [],
+      "console": []
+    }
+  ]
+}
