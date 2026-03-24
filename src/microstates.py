@@ -335,7 +335,7 @@ def plot_microstate_maps(
     :type fname: str|None
     """
 
-    plt.figure(figsize=((np.ceil(microstates.shape[0] / 2.0)) * 5, 12))
+    fig = plt.figure(figsize=((np.ceil(microstates.shape[0] / 2.0)) * 5, 12))
 
     ms_names = list(string.ascii_uppercase)[: microstates.shape[0]]
 
@@ -343,9 +343,9 @@ def plot_microstate_maps(
         xlabels = ["" for i in range(microstates.shape[0])]
 
     for i, t, xlab in zip(range(microstates.shape[0]), ms_names, xlabels):
-        plt.subplot(2, int(np.ceil(microstates.shape[0] / 2.0)), i + 1)
+        ax = fig.add_subplot(2, int(np.ceil(microstates.shape[0] / 2.0)), i + 1)
         mne.viz.plot_topomap(
-            microstates[i, :], mne_info, show=False, contours=10
+            microstates[i, :], mne_info, show=False, contours=10, axes=ax
         )
 
         if plot_minmax_vec:
@@ -354,23 +354,23 @@ def plot_microstate_maps(
             pos_int = mne.channels.layout._find_topomap_coords(
                 mne_info, picks="eeg"
             )
-            plt.gca().plot(
+            ax.plot(
                 [pos_int[min_sen, 0], pos_int[max_sen, 0]],
                 [pos_int[min_sen, 1], pos_int[max_sen, 1]],
                 "ko-",
                 markersize=7,
                 lw=2.2,
             )
-        plt.title(t, fontsize=25)
-        plt.xlabel(xlab, fontsize=22)
+        ax.set_title(t, fontsize=25)
+        ax.set_xlabel(xlab, fontsize=22)
 
-    plt.suptitle(title, fontsize=30)
+    fig.suptitle(title, fontsize=30)
 
     if fname is None:
         plt.show()
     else:
-        plt.savefig(fname, bbox_inches="tight", dpi=150, **kwargs)
-    plt.close()
+        fig.savefig(fname, bbox_inches="tight", dpi=150, **kwargs)
+    plt.close(fig)
 
 
 def match_reorder_microstates(

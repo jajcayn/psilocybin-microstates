@@ -56,7 +56,7 @@ def _():
 
     # if True, will save all statistical tests as csv and all plots as eps
     SAVE_RESULTS = True
-    PLOT_EXT = ".png"
+    PLOT_EXT = ".eps"
     # which correction for multiple comparisons should be used
     MULTI_CORRECTION = "fdr_bh"
     PVAL_STARS = {0.001: "***", 0.01: "**", 0.05: "*"}
@@ -235,7 +235,7 @@ def _(
                 bbox_inches="tight",
                 transparent=True,
             )
-            _p = pval.applymap(replace_pval)
+            _p = pval.map(replace_pval)
             corr = corr.round(5).astype(str) + _p
             corr.to_csv(
                 os.path.join(WORKING_DIR, f"{fname}_{method}_correlation.csv")
@@ -483,7 +483,7 @@ def _(
     )
     _bonf_corrd = pd.DataFrame(
         _bonf_corrd, columns=_plot_df.columns, index=_plot_df.index
-    ).applymap(replace_pval)
+    ).map(replace_pval)
     sns.heatmap(
         _plot_df,
         cmap="coolwarm",
@@ -519,7 +519,7 @@ def _(
             bbox_inches="tight",
             transparent=True,
         )
-        _p = grand_pvals.applymap(
+        _p = grand_pvals.map(
             lambda x: "".join(["*" for t in [0.001, 0.01, 0.05] if x <= t])
         )
         _corr = grand.round(5).astype(str) + _p
@@ -623,7 +623,7 @@ def _(
     )
     _bonf_corrd = pd.DataFrame(
         _bonf_corrd, columns=_plot_df.columns, index=_plot_df.index
-    ).applymap(replace_pval)
+    ).map(replace_pval)
     sns.heatmap(
         _plot_df,
         cmap="coolwarm",
@@ -661,7 +661,7 @@ def _(
             bbox_inches="tight",
             transparent=True,
         )
-        _p = grand_pvals_1.applymap(
+        _p = grand_pvals_1.map(
             lambda x: "".join(["*" for t in [0.001, 0.01, 0.05] if x <= t])
         )
         _corr = grand_1.round(5).astype(str) + _p
@@ -766,7 +766,7 @@ def _(
     )
     _bonf_corrd = pd.DataFrame(
         _bonf_corrd, columns=_plot_df.columns, index=_plot_df.index
-    ).applymap(replace_pval)
+    ).map(replace_pval)
     sns.heatmap(
         _plot_df,
         cmap="coolwarm",
@@ -804,7 +804,7 @@ def _(
             bbox_inches="tight",
             transparent=True,
         )
-        _p = grand_pvals_2.applymap(
+        _p = grand_pvals_2.map(
             lambda x: "".join(["*" for t in [0.001, 0.01, 0.05] if x <= t])
         )
         _corr = grand_2.round(5).astype(str) + _p
@@ -907,7 +907,7 @@ def _(
     )
     _bonf_corrd = pd.DataFrame(
         _bonf_corrd, columns=_plot_df.columns, index=_plot_df.index
-    ).applymap(replace_pval)
+    ).map(replace_pval)
     sns.heatmap(
         _plot_df,
         cmap="coolwarm",
@@ -945,7 +945,7 @@ def _(
             bbox_inches="tight",
             transparent=True,
         )
-        _p = grand_pvals_3.applymap(
+        _p = grand_pvals_3.map(
             lambda x: "".join(["*" for t in [0.001, 0.01, 0.05] if x <= t])
         )
         _corr = grand_3.round(5).astype(str) + _p
@@ -1116,7 +1116,7 @@ def _(
             corr_stars = (
                 corrs.pivot(index="X", columns="Y", values="p_corr")
                 .round(3)
-                .applymap(
+                .map(
                     lambda x: "".join(
                         ["*" for st in PVAL_STARS.keys() if x < st]
                     )

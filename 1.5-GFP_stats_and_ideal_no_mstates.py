@@ -35,7 +35,7 @@ def _():
     make_dirs(PLOTTING_DIR)
 
     SAVE_RESULTS = True
-    PLOT_EXT = ".png"
+    PLOT_EXT = ".eps"
     MULTI_CORRECTION = "fdr_bh"
     return (
         MULTI_CORRECTION,

@@ -50,7 +50,7 @@ def _():
 
     # if True, will save all statistical tests as csv and all plots as eps
     SAVE_RESULTS = True
-    PLOT_EXT = ".png"
+    PLOT_EXT = ".eps"
     # which correction for multiple comparisons should be used
     MULTI_CORRECTION = "fdr_bh"
     P_THRESH = 0.05
