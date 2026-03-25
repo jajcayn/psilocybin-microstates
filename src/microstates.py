@@ -40,7 +40,7 @@ def global_map_dissimilarity(map1: np.ndarray, map2: np.ndarray) -> float:
     """
     Computes a global map dissimilarity between two maps.
 
-    https://github.com/emma-holmes/Source-Dissimilarity-Index-for-Python/blob/master/SourceDissimilarityIndex.py
+    https://github.com/emma-holmes/Source-Dissimilarity-Index-for-Python
 
     :param map1: first map to compare
     :type map1: first map to compare
@@ -152,8 +152,8 @@ def segment(
         validation. IEEE Transactions on Biomedical Engineering, 42(7), 658-665.
     """
     logging.debug(
-        "Finding %d microstates, using %d random intitializations"
-        % (n_states, n_inits)
+        f"Finding {n_states} microstates, "
+        f"using {n_inits} random initializations"
     )
 
     if normalize:
@@ -192,7 +192,7 @@ def segment(
         gev_gfp = (
             sum((data[:, peaks].std(axis=0) * gfp_corr) ** 2) / peaks_sum_sq
         )
-        logging.debug("GEV of found microstates: %f" % gev)
+        logging.debug(f"GEV of found microstates: {gev:f}")
         if gev > best_gev:
             best_gev, best_maps, best_segmentation = gev, maps, segmentation
             best_gfp_gev = gev_gfp
@@ -266,7 +266,7 @@ def _mod_kmeans(
 
         # Have we converged?
         if (prev_residual - residual) < (thresh * residual):
-            logging.debug("Converged at %d iterations." % iteration)
+            logging.debug(f"Converged at {iteration} iterations.")
             break
 
         prev_residual = residual
@@ -342,7 +342,9 @@ def plot_microstate_maps(
     if xlabels is None:
         xlabels = ["" for i in range(microstates.shape[0])]
 
-    for i, t, xlab in zip(range(microstates.shape[0]), ms_names, xlabels):
+    for i, t, xlab in zip(
+        range(microstates.shape[0]), ms_names, xlabels, strict=False
+    ):
         ax = fig.add_subplot(2, int(np.ceil(microstates.shape[0] / 2.0)), i + 1)
         mne.viz.plot_topomap(
             microstates[i, :], mne_info, show=False, contours=10, axes=ax

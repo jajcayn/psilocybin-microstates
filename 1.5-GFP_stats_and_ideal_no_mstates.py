@@ -1,4 +1,4 @@
-# ruff: noqa: ANN001, ANN002, ANN003, ANN201, ANN202
+# ruff: noqa: ANN001, ANN202
 
 import marimo
 
@@ -201,6 +201,18 @@ def _(
     sns.boxplot(
         x="time", y="# GFP peaks", hue="condition", data=df_220, ax=axs[0]
     )
+    sns.stripplot(
+        x="time",
+        y="# GFP peaks",
+        hue="condition",
+        data=df_220,
+        ax=axs[0],
+        dodge=True,
+        size=4,
+        alpha=0.5,
+        legend=False,
+        palette="dark:black",
+    )
     axs[0].set_title("Filter: 2.0 - 20.0Hz", size=30)
     sign_220 = pg.pairwise_ttests(
         data=df_220,
@@ -220,6 +232,18 @@ def _(
 
     sns.boxplot(
         x="time", y="# GFP peaks", hue="condition", data=df_140, ax=axs[1]
+    )
+    sns.stripplot(
+        x="time",
+        y="# GFP peaks",
+        hue="condition",
+        data=df_140,
+        ax=axs[1],
+        dodge=True,
+        size=4,
+        alpha=0.5,
+        legend=False,
+        palette="dark:black",
     )
     axs[1].set_title("Filter: 1.0 - 40.0Hz", size=30)
     sign_140 = pg.pairwise_ttests(
@@ -335,7 +359,7 @@ def _(PLOTTING_DIR, PLOT_EXT, SAVE_RESULTS, ideal, os, plt, sns):
         multiple="dodge",
         discrete=True,
         shrink=0.8,
-        facet_kws=dict(margin_titles=True),
+        facet_kws={"margin_titles": True},
         height=5,
     )
     g.set_titles(col_template="", row_template="")

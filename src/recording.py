@@ -232,7 +232,7 @@ class PsilocybinRecording:
         self.coverage = {
             ms_no: count / self.segmentation.shape[0]
             for ms_no, count in zip(
-                *np.unique(self.segmentation, return_counts=True)
+                *np.unique(self.segmentation, return_counts=True), strict=False
             )
         }
 
@@ -259,7 +259,9 @@ class PsilocybinRecording:
         prob_matrix = np.zeros(
             (self.microstates.shape[0], self.microstates.shape[0])
         )
-        for from_, to_ in zip(self.segmentation, self.segmentation[1:]):
+        for from_, to_ in zip(
+            self.segmentation, self.segmentation[1:], strict=False
+        ):
             prob_matrix[from_, to_] += 1
         self.transition_mat = prob_matrix / np.nansum(
             prob_matrix, axis=1, keepdims=True

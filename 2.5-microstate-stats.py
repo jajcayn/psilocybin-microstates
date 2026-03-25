@@ -1,4 +1,4 @@
-# ruff: noqa: ANN001, ANN002, ANN003, ANN201, ANN202, E501
+# ruff: noqa: ANN001, ANN202, E501
 
 import marimo
 
@@ -43,8 +43,8 @@ def _():
     plt.rcParams["figure.figsize"] = (20, 9)
     sns.set_context("notebook", font_scale=2)
 
-    WORKING_DIR = os.path.join(RESULTS_ROOT, "20260116-new-recompute")
-    PLOTTING_DIR = os.path.join(PLOTS_ROOT, "new")
+    WORKING_DIR = os.path.join(RESULTS_ROOT, "20260325-final")
+    PLOTTING_DIR = os.path.join(PLOTS_ROOT, "final")
     if not os.path.exists(PLOTTING_DIR):
         make_dirs(PLOTTING_DIR)
 
@@ -86,8 +86,28 @@ def _(WORKING_DIR, os, pd):
 
 
 @app.cell
-def _(MULTI_CORRECTION, P_THRESH, SAVE_RESULTS, WORKING_DIR, np, os, pg):
-    # Functions for computing, saving and displaying ANOVAs and posthoc tests
+def _(MULTI_CORRECTION, P_THRESH, SAVE_RESULTS, WORKING_DIR, np, os, pd, pg):
+    def compute_power_from_anova(anova_df, n_subjects, n_measurements):
+        power_results = []
+        for _, row in anova_df.iterrows():
+            eta_sq = row["ng2"]
+            eps = row["eps"] if "eps" in row else 1.0
+            power = pg.power_rm_anova(
+                eta_squared=eta_sq,
+                m=n_measurements,
+                n=n_subjects,
+                epsilon=eps,
+                alpha=0.05,
+            )
+            power_results.append(
+                {
+                    "Source": row["Source"],
+                    "ng2": round(eta_sq, 4),
+                    "eps": round(eps, 3),
+                    "power": round(power, 3),
+                }
+            )
+        return pd.DataFrame(power_results)
 
     def diff_between_microstates(df, dv, filt_str):
         df = df.copy()
@@ -144,6 +164,17 @@ def _(MULTI_CORRECTION, P_THRESH, SAVE_RESULTS, WORKING_DIR, np, os, pg):
             )
         print("RM ANOVA")
         print(anova)
+
+        power_df = compute_power_from_anova(
+            anova, n_subjects=df["subject"].nunique(), n_measurements=5
+        )
+        if SAVE_RESULTS:
+            power_df.to_csv(
+                os.path.join(WORKING_DIR, f"{dv}_{filt_str}filt_power.csv"),
+                index=False,
+            )
+        print("Power analysis")
+        print(power_df)
 
         posthoc = pg.pairwise_tests(
             data=df,
@@ -314,6 +345,18 @@ def _(
             ax=axs[0],
             legend=legend_pos == 1,
         )
+        sns.stripplot(
+            x="microstate",
+            y=dv,
+            data=df.copy(),
+            hue="condition",
+            ax=axs[0],
+            dodge=True,
+            size=4,
+            alpha=0.5,
+            legend=False,
+            palette="dark:black",
+        )
         sns.despine(trim=True, ax=axs[0])
         if plot_signi:
             sign = pg.pairwise_tests(
@@ -346,6 +389,18 @@ def _(
             hue="condition",
             ax=axs[1],
             legend=legend_pos == 2,
+        )
+        sns.stripplot(
+            x="time",
+            y=dv,
+            data=df.copy(),
+            hue="condition",
+            ax=axs[1],
+            dodge=True,
+            size=4,
+            alpha=0.5,
+            legend=False,
+            palette="dark:black",
         )
         sns.despine(trim=True, ax=axs[1])
         if plot_signi:
@@ -395,6 +450,18 @@ def _(
                 hue="condition",
                 ax=ax,
                 legend=legend_pos > 2,
+            )
+            sns.stripplot(
+                x="time",
+                y=dv,
+                data=df[df["microstate"] == ms],
+                hue="condition",
+                ax=ax,
+                dodge=True,
+                size=4,
+                alpha=0.5,
+                legend=False,
+                palette="dark:black",
             )
             ax.set_title(f"Microstate {ms}")
             sns.despine(trim=True, ax=ax)

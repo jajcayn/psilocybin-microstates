@@ -86,7 +86,7 @@ def main() -> None:
     current_subject = None
 
     problematic = []
-    for idx, row in tqdm(info.iterrows()):
+    for _idx, row in tqdm(info.iterrows()):
         if row["Subj. & session No."] != "same":
             current_subject = row["Subj. & session No."]
         try:

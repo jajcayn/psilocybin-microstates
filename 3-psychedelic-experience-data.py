@@ -1,4 +1,4 @@
-# ruff: noqa: ANN001, ANN002, ANN003, ANN201, ANN202, E501
+# ruff: noqa: ANN001, ANN202, E501
 
 import marimo
 
@@ -46,11 +46,11 @@ def _():
     plt.rcParams["figure.figsize"] = (20, 9)
     sns.set_context("notebook", font_scale=1.75)
 
-    MS_STATS_ROOT = os.path.join(RESULTS_ROOT, "20260116-new-recompute")
+    MS_STATS_ROOT = os.path.join(RESULTS_ROOT, "20260325-final")
     WORKING_DIR = os.path.join(RESULTS_ROOT, "experience")
     if not os.path.exists(WORKING_DIR):
         make_dirs(WORKING_DIR)
-    PLOTTING_DIR = os.path.join(PLOTS_ROOT, "new")
+    PLOTTING_DIR = os.path.join(PLOTS_ROOT, "final")
     if not os.path.exists(PLOTTING_DIR):
         make_dirs(PLOTTING_DIR)
 
@@ -305,8 +305,8 @@ def _(ms_stats, pd, persisting_effs, pg):
         persisting_effs["subject"].isin(ms_stats["subject"])
     ]
     cols = [
-        "Attidues about Life positive",
-        "Attidues about Life negative",
+        "Attitudes about Life positive",
+        "Attitudes about Life negative",
         "Attitudes about Self positive",
         "Attitudes about Self negative",
         "Mood Changes positive",

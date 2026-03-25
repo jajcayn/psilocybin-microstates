@@ -1,4 +1,4 @@
-# ruff: noqa: ANN001, ANN002, ANN003, ANN201, ANN202, E501
+# ruff: noqa: ANN001, ANN202, E501
 
 import marimo
 
@@ -401,8 +401,8 @@ def _(ms_stats, pd, persisting_effs, pg):
         persisting_effs["subject"].isin(ms_stats["subject"])
     ]
     cols = [
-        "Attidues about Life positive",
-        "Attidues about Life negative",
+        "Attitudes about Life positive",
+        "Attitudes about Life negative",
         "Attitudes about Self positive",
         "Attitudes about Self negative",
         "Mood Changes positive",

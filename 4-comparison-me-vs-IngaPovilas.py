@@ -1,4 +1,4 @@
-# ruff: noqa: ANN001, ANN002, ANN003, ANN201, ANN202, E501
+# ruff: noqa: ANN001, ANN202
 
 import marimo
 

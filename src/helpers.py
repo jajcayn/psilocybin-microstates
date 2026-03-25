@@ -56,7 +56,7 @@ def run_in_parallel(
     if total is None:
         try:
             total = len(iterable)
-        except (TypeError, AttributeError):
+        except TypeError, AttributeError:
             pass
 
     # wrap method in order to get original exception from a worker process
