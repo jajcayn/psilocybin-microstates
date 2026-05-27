@@ -1047,6 +1047,12 @@ def _(MULTI_CORRECTION, experience_grp, ms_stats, pd, pd_pca, plot_corr):
             )
             _ms_stats_grp_ = pd.concat([_ms_stats_grp_, _pca_mat], axis=1)
         _grp_corrs = pd.concat([experience_grp, _ms_stats_grp_], axis=1)
+        _rename_conc = {
+            "PSI_conc_T60": "[PSI]T60",
+            "PSI_conc_T120": "[PSI]T120",
+            "PSI_conc_T240": "[PSI]T240",
+            "PSI_conc_T360": "[PSI]T360",
+        }
         plot_corr(
             _grp_corrs,
             method="spearman",
@@ -1055,6 +1061,7 @@ def _(MULTI_CORRECTION, experience_grp, ms_stats, pd, pd_pca, plot_corr):
             lines=[1, 5, 6, 8],
             title=f"Experience correlations {_time} \n masked out non-significant ~ {MULTI_CORRECTION.upper()} correction",
             fname=f"experience_agg_{_time}",
+            rename_cols=_rename_conc,
         )
     return
 
