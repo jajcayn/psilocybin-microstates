@@ -23,6 +23,9 @@ dependencies = [
     "xarray>=2025.12.0",
 ]
 
+[tool.uv]
+exclude-newer = "1 week"
+
 [tool.ruff]
 line-length = 80
 indent-width = 4

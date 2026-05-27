@@ -166,7 +166,16 @@ def _(
         mask_pval=True,
         fname=None,
         lines=None,
+        rename_cols=None,
+        xticklabels_rotation=0,
     ):
+        import re
+
+        df = df.rename(
+            columns=lambda c: re.sub(r"_PC(\d+)_[\d.]+%$", r"_PC\1", c)
+        )
+        if rename_cols:
+            df = df.rename(columns=rename_cols)
         plt.figure(figsize=(16, 14))
         corr = df.corr(method=method, numeric_only=True)
         lines = lines or []
@@ -226,6 +235,9 @@ def _(
             color=plt.rcParams["text.color"],
             linewidth=1.0,
         )
+        if xticklabels_rotation:
+            plt.xticks(rotation=xticklabels_rotation, ha="right")
+            plt.yticks(rotation=0)
         plt.title(title)
         if SAVE_RESULTS:
             plt.savefig(
@@ -358,6 +370,22 @@ def _(MULTI_CORRECTION, experience, plot_corr):
             axis=1,
         )
     )
+    _rename_cols = {
+        "BP-5:FKT-I_T70": "FI_T70",
+        "BP-5:FKT-II_T70": "FII_T70",
+        "BP-5:FKT-III_T70": "FIII_T70",
+        "BP-5:FKT-IV_T70": "FIV_T70",
+        "BP-5:FKT-V_T70": "FV_T70",
+        "BP-5:FKT-I_T180": "FI_T180",
+        "BP-5:FKT-II_T180": "FII_T180",
+        "BP-5:FKT-III_T180": "FIII_T180",
+        "BP-5:FKT-IV_T180": "FIV_T180",
+        "BP-5:FKT-V_T180": "FV_T180",
+        "PSI_conc_T60": "[PSI]T60",
+        "PSI_conc_T120": "[PSI]T120",
+        "PSI_conc_T240": "[PSI]T240",
+        "PSI_conc_T360": "[PSI]T360",
+    }
     plot_corr(
         corr_df,
         title=f"PSI only \n masked out non-significant ~ {MULTI_CORRECTION.upper()} correction",
@@ -366,6 +394,8 @@ def _(MULTI_CORRECTION, experience, plot_corr):
         lines=[4, 9, 14, 15, 19, 20],
         method="spearman",
         fname="experience_PSIonly",
+        rename_cols=_rename_cols,
+        xticklabels_rotation=90,
     )
     return
 
@@ -1051,6 +1081,14 @@ def _(MULTI_CORRECTION, ms_stats, pd, pd_pca, persisting_effs_grp, plot_corr):
             )
             _ms_stats_grp_ = pd.concat([_ms_stats_grp_, _pca_mat], axis=1)
         _grp_corrs = pd.concat([persisting_effs_grp, _ms_stats_grp_], axis=1)
+        _rename_pers = {
+            "Attitudes about Life positive": "Att.Life+",
+            "Attitudes about Self positive": "Att.Self+",
+            "Mood Changes positive": "Mood+",
+            "Relationships positive": "Relat+",
+            "Behavioral Changes positive": "Behav+",
+            "Spirituality positive": "Spirit+",
+        }
         plot_corr(
             _grp_corrs,
             method="spearman",
@@ -1059,6 +1097,7 @@ def _(MULTI_CORRECTION, ms_stats, pd, pd_pca, persisting_effs_grp, plot_corr):
             lines=[6],
             title=f"Persisting effects {_time} \n masked out non-significant ~ {MULTI_CORRECTION.upper()} correction",
             fname=f"persisting_effs_agg_{_time}",
+            rename_cols=_rename_pers,
         )
     return
 

@@ -296,6 +296,7 @@ def _(
     PLOTTING_DIR,
     PLOT_EXT,
     SAVE_RESULTS,
+    WORKING_DIR,
     np,
     os,
     pg,
@@ -367,12 +368,20 @@ def _(
                 padjust=MULTI_CORRECTION,
                 subject="subject",
                 within_first=False,
+                effsize="cohen",
             )
             # find significant
             where = sign[
                 (sign["p_corr"] <= 0.05)
                 & (sign["Contrast"] == "microstate * condition")
             ]
+            if SAVE_RESULTS:
+                where.round(5).to_csv(
+                    os.path.join(
+                        WORKING_DIR,
+                        f"{dv}_boxplot_ms_cond_factors_{filt_str}filt.csv",
+                    )
+                )
             _plot_ttest_signi(
                 where,
                 df[dv],
@@ -410,12 +419,20 @@ def _(
                 within=["time", "condition"],
                 subject="subject",
                 padjust=MULTI_CORRECTION,
+                effsize="cohen",
             )
             # find significant
             where = sign[
                 (sign["p_corr"] <= 0.05)
                 & (sign["Contrast"] == "time * condition")
             ]
+            if SAVE_RESULTS:
+                where.round(5).to_csv(
+                    os.path.join(
+                        WORKING_DIR,
+                        f"{dv}_boxplot_time_cond_factors_{filt_str}filt.csv",
+                    )
+                )
             _plot_ttest_signi(
                 where,
                 df[dv],
@@ -472,12 +489,20 @@ def _(
                     within=["time", "condition"],
                     subject="subject",
                     padjust=MULTI_CORRECTION,
+                    effsize="cohen",
                 )
                 # find significant
                 where = sign[
                     (sign["p_corr"] <= 0.05)
                     & (sign["Contrast"] == "time * condition")
                 ]
+                if SAVE_RESULTS:
+                    where.round(5).to_csv(
+                        os.path.join(
+                            WORKING_DIR,
+                            f"{dv}_boxplot_{ms}_interaction_{filt_str}filt.csv",
+                        )
+                    )
                 _plot_ttest_signi(
                     where,
                     df[df["microstate"] == ms][dv],
